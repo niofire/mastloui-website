@@ -1,31 +1,96 @@
 ﻿@{
     ViewBag.Title = "Home Page";
+    Layout = null;
 }
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:700" rel="stylesheet">
+<canvas id="myCanvas"></canvas>
+<script>
+    var AMOUNT_OF_STARS = 40;
+    var color_black = "black";
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+    var canvas = document.getElementById("myCanvas");
+    var width = canvas.width;
+    canvas.width = document.body.clientWidth * 0.97;
+    canvas.height = document.body.clientHeight * 0.97;
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
-</div>
+    var ctx = canvas.getContext("2d");
+    ctx.beginPath();
+    ctx.arc(95, 50, 40, 0, 2 * Math.PI);
+    ctx.stroke();
+
+    var cWidth;
+    var cHeight;
+
+    function onResize() {
+        var canvas = document.getElementById("myCanvas");
+        cWidth = canvas.width;
+        cHeight = canvas.height;
+
+        var ctx = canvas.getContext("2d");
+        clearCanvas(ctx);
+
+        for (var i = 0; i < AMOUNT_OF_STARS; ++i)
+            drawStar(ctx);
+        drawMenu(ctx);
+    }
+
+    var menuBarImg = new Image;
+    menuBarImg.src = "../Content/Images/StarFox64/MenuBar.png";
+
+    window.onload = function () {
+        onResize();
+    }
+
+    function drawMenu(ctx) {
+        var offset = {};
+        var barOffset = 45 * 1.5;
+        offset.x = cWidth * 0.5;
+        offset.y = cHeight * 0.5 - barOffset;
+        drawMenuBar(ctx, "Projects", offset);
+
+        offset.y += barOffset;
+        drawMenuBar(ctx, "Tutorials", offset);
+        offset.y += barOffset;
+        drawMenuBar(ctx, "About Me", offset);
+
+    }
+
+    function drawMenuBar(ctx, content, offset) {
+        var fontPixelSize = 30;
+        var c = document.getElementById("myCanvas");
+        var imgWidth = 440;
+        var imgHeight = 45;
+        console.log(menuBarImg);
+        ctx.drawImage(menuBarImg, offset.x - imgWidth * 0.5, offset.y - imgHeight * 0.5, imgWidth, imgHeight); // Or at whatever offset you like
+        ctx.font = `${fontPixelSize}px 'Open Sans'`;
+        ctx.fillStyle = "#1A0D55";
+        ctx.textAlign = "center";
+        ctx.fillText(content, offset.x, offset.y + fontPixelSize * 0.5 - 2)
+    }
+
+    function drawStar(ctx) {
+        var innerRadius = 1;
+        var outerRadius = 7;
+        var x = Math.random() * cWidth;
+        var y = Math.random() * cHeight;
+
+        ctx.beginPath();
+        var grd = ctx.createRadialGradient(x, y, innerRadius, x, y, outerRadius);
+        grd.addColorStop(0, "#413485");
+        grd.addColorStop(1, "#000000FF");
+
+        // Fill with gradient
+        ctx.fillStyle = grd;
+        ctx.fillRect(x - outerRadius, y - outerRadius, outerRadius * 2, outerRadius * 2);
+
+        ctx.stroke();
+
+    }
+
+    function clearCanvas(ctx) {
+        ctx.beginPath();
+        ctx.fillStyle = color_black;
+        ctx.fillRect(0, 0, cWidth, cHeight);
+        ctx.stroke();
+    }
+</script>
